@@ -2,24 +2,27 @@ name: Production Monitor
 
 on:
   schedule:
-    - cron: '0 * * * *' # Chạy mỗi 1 giờ
-  workflow_dispatch: # Cho phép bấm chạy bằng tay trên giao diện
+    # Chạy tự động mỗi 6 giờ một lần (bạn có thể tùy chỉnh)
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Cho phép bấm nút "Run workflow" thủ công trên GitHub
 
 jobs:
   monitor-api:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout mã nguồn
         uses: actions/checkout@v4
 
-      - name: Cài đặt Postman CLI
-        run: |
-          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
-      - name: Đăng nhập Postman
-        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+      - name: Cài đặt Newman
+        run: npm install -g newman
 
-      - name: Chạy kịch bản Monitor trực tiếp từ Cloud
+      - name: Chạy API Test Monitor
         run: |
-          postman collection run "59052556-60447643-5f80-469d-8831-a79ebc6ea1c8"
-                 
+          newman run RestfulBooker_API_Collection.json \
+            -e RestfulBooker.postman_environment.json
