@@ -22,4 +22,4 @@ jobs:
       - name: Chạy kịch bản Monitor trực tiếp từ Cloud
         run: |
           postman collection run "6ad640bd318b2e000101f3c3-b9dbb6d7584d869fbe67e072f1976d4806"
-                 workflow_dispatch: # Cho phép bấm chạy bằng tay trên giao diện
+                 
